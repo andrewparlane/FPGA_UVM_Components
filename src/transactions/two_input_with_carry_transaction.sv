@@ -14,5 +14,11 @@ package two_input_with_carry_transaction_pkg;
             super.new(name);
         endfunction: new
 
+        function string convert2string();
+            string s;
+            s = $sformatf("in1=%h, in2=%h, carryIn=%h", in1, in2, carryIn);
+            return s;
+        endfunction: convert2string
+
     endclass: two_input_with_carry_transaction
 endpackage: two_input_with_carry_transaction_pkg
