@@ -25,7 +25,7 @@ package two_input_with_carry_driver_pkg;
                 @(posedge vif.clk);
                 seq_item_port.get_next_item(tx);
                 txCount++;
-                `uvm_info("driver", $psprintf("tx %d", txCount), UVM_HIGH);
+                `uvm_info("driver", $psprintf("tx %d - %s", txCount, tx.convert2string()), UVM_HIGH);
                 vif.in1 = tx.in1;
                 vif.in2 = tx.in2;
                 vif.carryIn = tx.carryIn;
