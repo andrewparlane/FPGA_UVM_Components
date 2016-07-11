@@ -9,9 +9,11 @@ package two_input_one_output_with_carry_agent_pkg;
     class two_input_one_output_with_carry_agent #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH) extends uvm_agent;
         `uvm_component_param_utils(two_input_one_output_with_carry_agent #(INPUT_WIDTH, OUTPUT_WIDTH))
 
+        typedef two_input_with_carry_transaction #(.WIDTH(INPUT_WIDTH)) driver_transaction_type;
+
         typedef agent_base_config #(.INTERFACE(virtual two_input_one_output_with_carry_if #(.INPUT_WIDTH(INPUT_WIDTH), .OUTPUT_WIDTH(OUTPUT_WIDTH)))) config_type;
         typedef two_input_with_carry_driver #(.WIDTH(INPUT_WIDTH)) driver_type;
-        typedef uvm_sequencer #(two_input_with_carry_transaction #(.WIDTH(INPUT_WIDTH))) sequencer_type;
+        typedef uvm_sequencer #(driver_transaction_type) sequencer_type;
 
         // our configuration, passed in from the test using the uvm_config_db
         config_type agentConfig;
