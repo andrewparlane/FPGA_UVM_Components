@@ -24,14 +24,19 @@ package two_input_with_carry_driver_pkg;
             forever begin
                 transaction_type tx;
 
+                // wait for the next rising clk edge and
+                // then get the next transaction from the sequencer
                 @(posedge vif.clk);
                 seq_item_port.get_next_item(tx);
+
+                // turn the transaction into pin wiggles
                 txCount++;
                 `uvm_info("driver", $psprintf("tx %d - %s", txCount, tx.convert2string()), UVM_HIGH);
                 vif.in1 = tx.in1;
                 vif.in2 = tx.in2;
                 vif.carryIn = tx.carryIn;
 
+                // we're done
                 seq_item_port.item_done();
             end
         endtask: run_phase
