@@ -22,6 +22,11 @@ package two_input_one_output_with_carry_agent_pkg;
         driver_type driver;
         sequencer_type sequencer;
 
+        // our analysis port
+        // acts as a pass through from the driver to the environment
+        // the driver passes the inputs that go into the DUT
+        uvm_analysis_port #(driver_transaction_type) driver_aport;
+
         function new (string name, uvm_component parent);
             super.new(name, parent);
         endfunction: new
@@ -35,6 +40,9 @@ package two_input_one_output_with_carry_agent_pkg;
             driver = driver_type::type_id::create("driver", this);
             sequencer = sequencer_type::type_id::create("sequencer", this);
 
+            // create our analysis port
+            driver_aport = new("driver_aport", this);
+
             // pass the virtual DUT interface to the driver
             driver.vif = agentConfig.vif;
         endfunction: build_phase
@@ -42,6 +50,8 @@ package two_input_one_output_with_carry_agent_pkg;
         function void connect_phase(uvm_phase phase);
             // connect the sequencer to the driver
             driver.seq_item_port.connect(sequencer.seq_item_export);
+            // connect the driver to our driver pass through analysis port
+            driver.aport.connect(driver_aport);
         endfunction: connect_phase
 
     endclass: two_input_one_output_with_carry_agent
