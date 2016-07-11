@@ -15,5 +15,8 @@ vlog $env(UVM_COMPONENTS_DIR)/src/sequences/*
 # drivers
 vlog $env(UVM_COMPONENTS_DIR)/src/drivers/*
 
+# monitors
+vlog  $env(UVM_COMPONENTS_DIR)/src/monitors/*
+
 # agents
 vlog $env(UVM_COMPONENTS_DIR)/src/agents/*
