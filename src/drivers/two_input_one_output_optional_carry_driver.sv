@@ -7,6 +7,8 @@ package two_input_with_carry_driver_pkg;
     class two_input_with_carry_driver #(parameter WIDTH = 1) extends uvm_driver #(two_input_with_carry_transaction #(.WIDTH(WIDTH)));
         `uvm_component_param_utils(two_input_with_carry_driver #(WIDTH))
 
+        typedef two_input_with_carry_transaction #(.WIDTH(WIDTH)) transaction_type;
+
         // tracks how many transactions have been sent out
         int txCount = 0;
 
@@ -20,7 +22,7 @@ package two_input_with_carry_driver_pkg;
 
         task run_phase(uvm_phase phase);
             forever begin
-                two_input_with_carry_transaction #(.WIDTH(WIDTH)) tx;
+                transaction_type tx;
 
                 @(posedge vif.clk);
                 seq_item_port.get_next_item(tx);
