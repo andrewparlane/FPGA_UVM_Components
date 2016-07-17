@@ -4,17 +4,17 @@ package two_input_with_carry_driver_pkg;
     import uvm_pkg::*;
     import two_input_with_carry_transaction_pkg::*;
 
-    class two_input_with_carry_driver #(parameter WIDTH = 1) extends uvm_driver #(two_input_with_carry_transaction #(.WIDTH(WIDTH)));
-        `uvm_component_param_utils(two_input_with_carry_driver #(WIDTH))
+    class two_input_with_carry_driver #(parameter INPUT_WIDTH, parameter OUTPUT_WIDTH) extends uvm_driver #(two_input_with_carry_transaction #(.WIDTH(INPUT_WIDTH)));
+        `uvm_component_param_utils(two_input_with_carry_driver #(INPUT_WIDTH, OUTPUT_WIDTH))
 
-        typedef two_input_with_carry_transaction #(.WIDTH(WIDTH)) transaction_type;
+        typedef two_input_with_carry_transaction #(.WIDTH(INPUT_WIDTH)) transaction_type;
 
         // tracks how many transactions have been sent out
         int txCount = 0;
 
         // the virtual interface we use to talk to the DUT
-        virtual two_input_one_output_with_carry_if #(.INPUT_WIDTH(WIDTH),
-                                                     .OUTPUT_WIDTH(WIDTH)) vif;
+        virtual two_input_one_output_with_carry_if #(.INPUT_WIDTH(INPUT_WIDTH),
+                                                     .OUTPUT_WIDTH(INPUT_WIDTH)) vif;
 
         // An analysis port that feeds back what we send
         // to any scoreboards for prediction
