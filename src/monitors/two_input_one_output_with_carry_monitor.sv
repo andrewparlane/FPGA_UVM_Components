@@ -39,7 +39,7 @@ package two_input_one_output_with_carry_monitor_pkg;
                 tx.out = vif.out;
                 tx.carryOut = vif.carryOut;
 
-                `uvm_info("monitor", $psprintf("Writing - %s", tx.output2string()), UVM_HIGH);
+                `uvm_info("monitor", $psprintf("Writing - %s", tx.outputs2string()), UVM_HIGH);
                 aport.write(tx);
             end
         endtask: run_phase

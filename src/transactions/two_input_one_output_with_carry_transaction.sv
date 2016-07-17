@@ -16,17 +16,11 @@ package two_input_one_output_with_carry_transaction_pkg;
             super.new(name);
         endfunction: new
 
-        function string output2string();
+        function string outputs2string();
             string s;
             s = $sformatf(" out=%h, carryOut=%h", out, carryOut);
             return s;
-        endfunction: output2string
-
-        function string convert2string();
-            string s;
-            s = { super.convert2string(), output2string() };
-            return s;
-        endfunction: convert2string
+        endfunction: outputs2string
 
     endclass: two_input_one_output_with_carry_transaction
 endpackage: two_input_one_output_with_carry_transaction_pkg

@@ -39,7 +39,7 @@ package two_input_with_carry_driver_pkg;
 
                 // turn the transaction into pin wiggles
                 txCount++;
-                `uvm_info("driver", $psprintf("tx %d - %s", txCount, tx.convert2string()), UVM_HIGH);
+                `uvm_info("driver", $psprintf("tx %d - %s", txCount, tx.inputs2string()), UVM_HIGH);
                 vif.in1 = tx.in1;
                 vif.in2 = tx.in2;
                 vif.carryIn = tx.carryIn;
