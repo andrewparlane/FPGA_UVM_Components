@@ -22,5 +22,12 @@ package two_input_one_output_with_carry_transaction_pkg;
             return s;
         endfunction: outputs2string
 
+        function void copy_inputs(two_input_with_carry_transaction #(.WIDTH(INPUT_WIDTH)) tx);
+            super.copy(tx);
+        endfunction: copy_inputs
+
+        function logic compare_outputs(two_input_one_output_with_carry_transaction #(.INPUT_WIDTH(INPUT_WIDTH), .OUTPUT_WIDTH(OUTPUT_WIDTH)) tx);
+            return (out === tx.out && carryOut === tx.carryOut);
+        endfunction: compare_outputs
     endclass: two_input_one_output_with_carry_transaction
 endpackage: two_input_one_output_with_carry_transaction_pkg
