@@ -20,3 +20,6 @@ vlog  $env(UVM_COMPONENTS_DIR)/src/monitors/*.sv
 
 # agents
 vlog $env(UVM_COMPONENTS_DIR)/src/agents/*.sv
+
+# scoreboards
+vlog $env(UVM_COMPONENTS_DIR)/src/scoreboards/*.sv
