@@ -3,8 +3,8 @@
 # Requirements:
 #   QuestaSim - We use the vlog compiler packaged with QuestaSim.
 #     ModelSim also comes with vlog, but doesn't really support UVM.
-#   UVM_INCLUDE_DIR environment var - This should point to the UVM src directory.
-#     For me this is: C:\questasim_10.0b\verilog_src\uvm-1.0p1\src
+#   UVM_HOME environment var - This should point to the UVM src directory.
+#     For me this is: C:/questasim_10.0b/uvm-1.0p1
 # ----------------------------------------------------------------------------------
 # Notes:
 #   The vlog compiler creates an output folder in the VLIB_DIR directors
@@ -22,7 +22,7 @@
 # some variabls to use later
 VLIB_DIR 	= ./uvm_components_work
 VLIB_NAME	= uvm_components_work
-VLOG_FLAGS 	= -work $(VLIB_NAME) +incdir+$(UVM_INCLUDE_DIR)
+VLOG_FLAGS 	= -work $(VLIB_NAME)
 
 # pull in some macros
 # this has: colour codes for outputting messages in colour
@@ -62,22 +62,14 @@ COMPONENTS	= interfaces \
               scoreboards
 
 
-# default rule is to create the library, compile the UVM pkg and all the components
-all: $(VLIB_DIR) UVM $(COMPONENTS)
+# default rule is to create the library, and compile all the components
+all: $(VLIB_DIR) $(COMPONENTS)
 
 # create the questaSim library if it's not already there
 $(VLIB_DIR):
 	vlib $(VLIB_DIR)
 	vmap $(VLIB_NAME) $(VLIB_DIR)
 	@echo -e "$(COLOUR_GREEN)Created the $(VLIB_DIR) library mapped to $(VLIB_NAME)$(COLOUR_NONE)\n"
-
-# compile the UVM library
-$(VLIB_DIR)/uvm_pkg/_primary.dat:
-	vlog $(VLOG_FLAGS) $(UVM_INCLUDE_DIR)/uvm.sv
-	@echo -e "$(COLOUR_GREEN)Compiled the UVM package$(COLOUR_NONE)\n"
-
-# simple alias
-UVM: $(VLIB_DIR) $(VLIB_DIR)/uvm_pkg/_primary.dat
 
 # create targets for all our sources
 # this loops through all of our source files in the $(SRCS) var
@@ -88,34 +80,34 @@ UVM: $(VLIB_DIR) $(VLIB_DIR)/uvm_pkg/_primary.dat
 $(foreach src,$(SRCS),$(eval $(call create_target_for, $(src))))
 
 # define a phony target per directory so we can specify compile order
-interfaces: $(VLIB_DIR) UVM \
+interfaces: $(VLIB_DIR) \
             $(call src2obj, $(INTERFACE_SRCS))
 	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
 
-configs: $(VLIB_DIR) UVM \
+configs: $(VLIB_DIR) \
          $(call src2obj, $(CONFIG_SRCS))
 	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
 
-transactions: $(VLIB_DIR) UVM \
+transactions: $(VLIB_DIR) \
               $(call src2obj, $(TRANSACTION_SRCS))
 	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
 
-sequences: $(VLIB_DIR) UVM \
+sequences: $(VLIB_DIR) \
            transactions \
            $(call src2obj, $(SEQUENCE_SRCS))
 	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
 
-drivers: $(VLIB_DIR) UVM \
+drivers: $(VLIB_DIR) \
          transactions interfaces \
          $(call src2obj, $(DRIVER_SRCS))
 	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
 
-monitors: $(VLIB_DIR) UVM \
+monitors: $(VLIB_DIR) \
           transactions interfaces \
           $(call src2obj, $(MONITOR_SRCS))
 	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
 
-agents: $(VLIB_DIR) UVM \
+agents: $(VLIB_DIR) \
         drivers monitors transactions configs interfaces \
         $(call src2obj, $(AGENT_SRCS))
 	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
@@ -128,4 +120,4 @@ clean:
 	if [ -d $(VLIB_DIR) ]; then vdel -lib $(VLIB_DIR) -all; fi;
 	if [ -e modelsim.in ]; then rm modelsim.ini; fi;
 
-.PHONY: clean UVM all $(COMPONENTS)
+.PHONY: clean all $(COMPONENTS)
