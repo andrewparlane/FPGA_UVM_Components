@@ -59,7 +59,10 @@ package basic_scoreboard_pkg;
 
     endclass: basic_scoreboard_predictor
 
-    // our comparator. This shuoldn't be extended
+    // our comparator.
+    // This can be extended and the send_data_out_on_pass method overriden.
+    // That allows you to pass data to a coverage collector (or other subscriber)
+    // on a sucessfull comparison.
     class basic_scoreboard_comparator #(parameter type transaction_type) extends uvm_component;
         `uvm_component_param_utils(basic_scoreboard_comparator #(transaction_type))
 
@@ -118,6 +121,7 @@ package basic_scoreboard_pkg;
                 if (actual.compare_outputs(prediction)) begin
                     // Pass
                     `uvm_info("basic_scoreboard_comparator", "pass", UVM_HIGH);
+                    send_data_out_on_pass(actual, prediction);
                 end else begin
                     // Fail
                     txFail++;
@@ -139,20 +143,32 @@ package basic_scoreboard_pkg;
                 `uvm_info("basic_scoreboard_comparator", $psprintf("%d transactions, all OK", txCount), UVM_NONE);
             end
         endfunction: report_phase
+
+        virtual function void send_data_out_on_pass(transaction_type actual, transaction_type prediction);
+            // by default does nothing
+
+            // extend and overwrite to send data out on a pass.
+            // data sent could be the transaction or it could be different.
+            // See: https://verificationacademy.com/cookbook/coverage/block_level_functional_coverage_example
+            // In that example, looking at the uart tx coverage, we send out the
+            // value of the LCR register for coverage
+        endfunction: send_data_out_on_pass
     endclass: basic_scoreboard_comparator
 
     // Our scoreboard.
     // This just connects the monitors, predictor and comparator together
-    class basic_scoreboard #(parameter type predictor_type, parameter type input_transaction_type, parameter type output_transaction_type) extends uvm_scoreboard;
-        `uvm_component_param_utils(basic_scoreboard #(predictor_type, input_transaction_type, output_transaction_type))
-
-        typedef basic_scoreboard_comparator #(.transaction_type(output_transaction_type)) comparator_with_transaction_type;
+    class basic_scoreboard #(parameter type predictor_type,
+                             parameter type input_transaction_type,
+                             parameter type output_transaction_type,
+                             parameter type comparator_type = basic_scoreboard_comparator #(.transaction_type(output_transaction_type)))
+                           extends uvm_scoreboard;
+        `uvm_component_param_utils(basic_scoreboard #(predictor_type, input_transaction_type, output_transaction_type, comparator_type))
 
         // our predictor. Should be an extension of basic_scoreboard_predictor
         predictor_type predictor;
 
         // our comparator
-        comparator_with_transaction_type comparator;
+        comparator_type comparator;
 
         // our analysis ports from the monitors
         // note: output_aport is actually the input from the monitor that looks at the DUT's outputs
@@ -170,7 +186,7 @@ package basic_scoreboard_pkg;
 
             // create our predictor and comparator
             predictor = predictor_type::type_id::create("predictor", this);
-            comparator = comparator_with_transaction_type::type_id::create("comparator", this);
+            comparator = comparator_type::type_id::create("comparator", this);
         endfunction: build_phase
 
         function void connect_phase(uvm_phase phase);
