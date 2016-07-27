@@ -18,10 +18,10 @@ package two_input_with_carry_sequence_pkg;
         endfunction: new
 
         task body;
-            repeat (transactionCount) begin
-                transaction_type tx;
-                tx = transaction_type::type_id::create("tx");
+            transaction_type tx;
+            tx = transaction_type::type_id::create("tx");
 
+            repeat (transactionCount) begin
                 start_item(tx);
                 assert(tx.randomize());
                 finish_item(tx);
