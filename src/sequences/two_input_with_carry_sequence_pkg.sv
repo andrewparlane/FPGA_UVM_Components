@@ -23,7 +23,9 @@ package two_input_with_carry_sequence_pkg;
 
             repeat (transactionCount) begin
                 start_item(tx);
-                assert(tx.randomize());
+                if (!tx.randomize()) begin
+                    `uvm_error("two_input_with_carry_sequence", "randomize() failed");
+                end
                 finish_item(tx);
             end
         endtask: body
