@@ -113,7 +113,7 @@ package basic_scoreboard_pkg;
                 // wait for an actual output
                 `uvm_info("basic_scoreboard_comparator", "Waiting for an actual output", UVM_FULL);
                 actual_fifo.get(actual);
-                `uvm_info("basic_scoreboard_comparator", $psprintf("Got an actual output: %s", prediction.outputs2string()), UVM_HIGH);
+                `uvm_info("basic_scoreboard_comparator", $psprintf("Got an actual output: %s", actual.outputs2string()), UVM_HIGH);
 
                 txCount++;
 
