@@ -15,6 +15,9 @@
 #     Each file can only contain a single interface, package or module
 #     No capitals in package/module/interface naems
 #     The package/module/interface has the same name as the file
+#   Finally you can pass in a list of prerequisites (normally packages)
+#   That need to be compiled before any of the uvm_components by using the
+#   PREREQS variable.
 
 # set the default target to be all. Otherwise it's the first target it finds
 .DEFAULT_GOAL := all
@@ -42,7 +45,8 @@ AGENT_SRCS 			= $(wildcard src/agents/*.sv)
 SCOREBOARD_SRCS 	= $(wildcard src/scoreboards/*.sv)
 
 # all source files - for use with creating makefile targets
-SRCS				= $(INTERFACE_SRCS) \
+SRCS				= $(PREREQS) \
+					  $(INTERFACE_SRCS) \
                       $(CONFIG_SRCS) \
                       $(TRANSACTION_SRCS) \
                       $(SEQUENCE_SRCS) \
@@ -52,7 +56,8 @@ SRCS				= $(INTERFACE_SRCS) \
                       $(SCOREBOARD_SRCS)
 
 # list of all the components
-COMPONENTS	= interfaces \
+COMPONENTS	= prerequisites \
+			  interfaces \
               configs \
               transactions \
               sequences \
@@ -80,6 +85,10 @@ $(VLIB_DIR):
 $(foreach src,$(SRCS),$(eval $(call create_target_for, $(src))))
 
 # define a phony target per directory so we can specify compile order
+prerequisites: $(VLIB_DIR) \
+			   $(call src2obj, $(PREREQS))
+	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
+
 interfaces: $(VLIB_DIR) \
             $(call src2obj, $(INTERFACE_SRCS))
 	@echo -e "$(COLOUR_GREEN)Compiled all $@$(COLOUR_NONE)\n"
