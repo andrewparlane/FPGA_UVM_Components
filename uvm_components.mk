@@ -48,16 +48,28 @@ COLOURIZE = (set -o pipefail; $(1) 2> >($(COLOURIZE_SED_ALL) >&2) | $(COLOURIZE_
 # end colourization
 # ----------------------------------------------------------------------------------
 
-# macros to turn a .sv file into the compiled file in the relevant VLIB_DIR subdirectory
-# src/abc/def.sv -> $(VLIB_DIR)/def/_primary.dat
-src2obj 	= $(addsuffix /_primary.dat, $(addprefix $(VLIB_DIR)/, $(basename $(notdir $(1)))))
+# When we compile a file using vlog, we create a flag file
+# which can be used as a dependency for each .sv file.
+# As make can compare the timestamps of the source file and the
+# flag file. In older versions of questaSim vlog created a
+# unique file per package/interface/module automaticaly
+# however in the later versions it does not.
+
+# directory where we store the flags
+FLAGS_DIR	= $(VLIB_DIR)/flags/
+
+# Macro to turn source file path into the flag file path
+#	Takes one argument:
+#		1) source file path
+src2obj		= $(addsuffix .flag, $(addprefix $(FLAGS_DIR), $(basename $(notdir $(1)))))
 
 # macro to create a target for a given source file
 # it takes two arguments:
 # 1) the path and name of the source file
 # 2) any dependencies
-# It then creates a traget on the relevant _primary.dat (questaSim created object)
+# It then creates a traget on the relevant flag file
 # with a dependency on the source file, and any other passed in dependencies
+# If compilation is successfull we create the flag file
 define create_target_for
 
 $$(info create_target_for called on $(1))
@@ -68,5 +80,8 @@ $(call src2obj, $(1)): $(1) $(2)
 	@echo -e "$(COLOUR_BLUE)compiling $(1) because of changes in: $$? $(COLOUR_NONE)\n"
 	# double dollar here, so the call gets executed at run time, not at eval time
 	$$(call COLOURIZE ,vlog $(VLOG_FLAGS) $(1))
+	# if the compile was successfull touch our flag file
+	mkdir -p $(FLAGS_DIR)
+	touch $(call src2obj, $(1))
 
 endef

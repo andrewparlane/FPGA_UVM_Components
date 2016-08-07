@@ -7,16 +7,9 @@
 #     For me this is: C:/questasim_10.0b/uvm-1.0p1
 # ----------------------------------------------------------------------------------
 # Notes:
-#   The vlog compiler creates an output folder in the VLIB_DIR directors
-#   per package/module/interface with the same name as the entity
-#   Any capitals are replace with @ followed by the lower case letter
-#   IE. FooBar -> @foo@bar
-#   This makefile requires that:
-#     Each file can only contain a single interface, package or module
-#     No capitals in package/module/interface naems
-#     The package/module/interface has the same name as the file
-#   Finally you can pass in a list of prerequisites (normally packages)
-#   That need to be compiled before any of the uvm_components by using the
+#	You can pass in a list of prerequisites (normally packages that
+#	are used by either the interface or the transaction), that need
+# 	to be compiled before any of the uvm_components by using the
 #   PREREQS variable.
 
 # set the default target to be all. Otherwise it's the first target it finds
