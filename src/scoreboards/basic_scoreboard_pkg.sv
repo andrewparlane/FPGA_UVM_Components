@@ -125,7 +125,7 @@ package basic_scoreboard_pkg;
                 end else begin
                     // Fail
                     txFail++;
-                    `uvm_error("basic_scoreboard_comparator", $psprintf("Compare failed: inputs %s - prediction %s - actual outputs %s", prediction.inputs2string(), prediction.outputs2string(), actual.outputs2string()));
+                    `uvm_error("basic_scoreboard_comparator", $psprintf("Compare failed!\n\tinputs:\t%s\n\tPrediction:\t%s\n\tActual outputs:\t%s", prediction.inputs2string(), prediction.outputs2string(), actual.outputs2string()));
                 end
 
                 // drop the objection. If the test also drops it's objections
